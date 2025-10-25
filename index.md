@@ -119,3 +119,86 @@ EmailEvents
 | sort by Timestamp desc
 | project Timestamp, RecipientEmailAddress, SenderFromAddress, Subject, DeliveryAction, ThreatTypes
 | take 20
+This confirmed the lab’s phishing events appeared correctly in the `EmailEvents` table and were being synchronised to Sentinel.
+```
+---
+
+## Sentinel Integration
+After connecting Sentinel to Defender XDR, multiple data tables became available for correlation:
+
+- `EmailEvents`  
+- `SigninLogs`  
+- `AlertInfo`  
+- `MessageEvents`  
+- `UrlClickEvents`  
+
+This allows incidents to be traced from delivery to user sign-in and alert generation, all within Sentinel.
+
+**Workspace:** `Sentinel-Workspace (UK South)`  
+**Connection Status:** ✅ Connected  
+
+---
+
+## Key Results
+
+| Metric | Value |
+|---------|--------|
+| Simulated phishing emails | 19 |
+| Users who clicked | 1 |
+| Credentials submitted | 0 |
+| Alerts generated | 10+ |
+| Duplicate alerts reduced | ~25% |
+| Defender → Sentinel data tables | 6 |
+
+---
+
+## Example Hunting Queries
+
+### Email → Sign-in Correlation
+<pre lang="kql"><code>
+let phish = EmailEvents
+| where ThreatTypes has "Phish"
+| project PhishTime=Timestamp, Recipient=RecipientEmailAddress;
+SigninLogs
+| join kind=inner (phish) on $left.UserPrincipalName == $right.Recipient
+| where TimeGenerated between (PhishTime .. PhishTime + 1h)
+| project UserPrincipalName, IPAddress, Location, PhishTime
+</code></pre>
+
+### URL Click Tracking
+<pre lang="kql"><code>
+UrlClickEvents
+| where Timestamp > ago(7d)
+| project Timestamp, UserPrincipalName, Url, ClickAction, DetectionMethods
+| sort by Timestamp desc
+</code></pre>
+
+
+---
+
+## MITRE ATT&CK Mapping
+
+This lab aligns with several key techniques in the [MITRE ATT&CK framework](https://attack.mitre.org/):
+
+| Tactic | Technique | Description |
+|--------|------------|-------------|
+| **Initial Access** | [T1566.001 – Spearphishing Attachment](https://attack.mitre.org/techniques/T1566/001/) | Simulated phishing emails with malicious attachments and Safe Attachments inspection. |
+| **Initial Access** | [T1566.002 – Spearphishing Link](https://attack.mitre.org/techniques/T1566/002/) | Simulated credential-harvesting campaigns using Safe Links. |
+| **Credential Access** | [T1078 – Valid Accounts](https://attack.mitre.org/techniques/T1078/) | Detection of compromised or reused credentials from phishing tests. |
+| **Defence Evasion** | [T1070 – Indicator Removal](https://attack.mitre.org/techniques/T1070/) | Testing log integrity and visibility after simulated user actions. |
+| **Discovery** | [T1087 – Account Discovery](https://attack.mitre.org/techniques/T1087/) | Monitoring Entra ID sign-ins for reconnaissance or enumeration attempts. |
+
+---
+
+## Takeaways
+- Defender for Office 365 provided detailed telemetry for message delivery and clicks.  
+- Safe Links effectively stopped users from visiting known malicious domains.  
+- Connecting Defender XDR to Sentinel created a unified investigation view.  
+- Tuning alert rules reduced redundant notifications by about 25%.  
+- KQL hunting is invaluable for validating telemetry and building correlations.  
+
+---
+
+## Summary
+This lab demonstrates an end-to-end Microsoft 365 threat investigation workflow - from email delivery and Safe Links inspection, through phishing simulations, to data correlation in Sentinel.  
+It provides a clear view of how Microsoft’s security stack works together for detection, hunting, and response.
