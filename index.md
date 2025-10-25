@@ -1,7 +1,3 @@
-# Nihat Aliev · Cybersecurity & Blue Team Labs
-
-> SIEM, XDR, Incident Response, and Detection Engineering projects.
-
 ## Index
 - [Microsoft 365 Threat Investigation & Response Lab](#microsoft-365-threat-investigation--response-lab)
 - [Microsoft Sentinel SIEM & SOAR Automation Lab](#microsoft-sentinel-siem--soar-automation-lab)
