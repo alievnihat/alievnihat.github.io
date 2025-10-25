@@ -1,123 +1,121 @@
+# Microsoft 365 Threat Investigation & Response Lab
+
+## Overview
+This project is a hands-on Microsoft 365 E5 lab built to explore how **Defender for Office 365**, **Microsoft Defender XDR**, **Entra ID**, and **Sentinel** work together to detect and respond to phishing and credential-theft threats.
+
+The lab simulates realistic attack scenarios using Safe Links, phishing simulations, and custom phishing emails, then tracks the detection flow from Microsoft 365 Defender into Sentinel.  
+All work was performed in an isolated Microsoft 365 E5 developer tenant.
+
 ---
-layout: default
+
+## Environment Setup
+
+### Tenant & Test Accounts
+The lab uses a single Microsoft 365 E5 developer tenant:  
+**Domain:** `nihatlab.onmicrosoft.com`
+
+Five test accounts were created to represent users and analysts:
+- Alice User  
+- Bob User  
+- Chris User  
+- Analyst User  
+- Nihat Aliev  
+
+Each account was licensed with **Office 365 E5 (no Teams)**.  
+Administrative roles were added in Entra ID for:
+- **Privileged Role Administrator**
+- **Security Reader**
+
+![User List](screenshots/2.%20User%20List.png)
+![Entra ID Roles](screenshots/8.%20Create%20EntraID%20roles.png)
+
 ---
 
-Text can be **bold**, _italic_, ~~strikethrough~~ or `keyword`.
+### Safe Links Policy
+A Safe Links policy was configured to protect both inbound and internal messages.
 
-[Link to another page](./another-page.html).
+**Policy:** `SafeLinks Lab`  
+**Included Users:** Alice, Bob, Chris  
+**Settings:**
+- URL rewriting and scanning – **Enabled**  
+- Real-time URL scanning – **Enabled**  
+- Scan before delivery – **Enabled**  
+- API checks – **Enabled**
 
-There should be whitespace between paragraphs.
+This ensures any URL in email is analyzed before a user can access it.
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+![Safe Links Policy](screenshots/3.%20SafeLinks%20Policy.png)
 
-# Header 1
+---
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+### Log Analytics & Sentinel Setup
+A **Log Analytics Workspace** (`Sentinel-Workspace`) was deployed in Azure (UK South).  
+Microsoft Sentinel was then enabled and linked to this workspace.
 
-## Header 2
+After deployment, **Defender XDR** was connected to Sentinel to stream logs from:
+- EmailEvents  
+- MessageEvents  
+- UrlClickEvents  
+- SigninLogs  
+- AlertInfo  
+- AlertEvidence  
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
+![Log Analytics Workspace](screenshots/9.%20Create%20Log%20Analytics.png)
+![Sentinel Connection](screenshots/10.%20Connect%20Defender%20to%20Sentinel.png)
 
-### Header 3
+---
 
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
-}
-```
+## Attack Simulations
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
+### Built-in Phishing Simulation
+Using **Attack Simulation Training** in Defender for Office 365, a baseline credential-harvesting campaign was launched.
 
-#### Header 4
+**Scenario:** Credential Harvest  
+**Delivery Platform:** Email  
+**Results:**
+- 1 user clicked the link  
+- 0 users submitted credentials  
 
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
+The simulation verified message delivery and interaction telemetry within Defender.
 
-##### Header 5
+![Phishing Simulation](screenshots/11.%20Baseline%20Phishing%20Simulation.png)
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
+---
 
-###### Header 6
+### Custom Phishing Email
+A manual phishing message was crafted and sent to Chris User to simulate a real-world credential-theft attempt.
 
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
+**Subject:** “Important Notification – Your TESCO account will be suspended”  
+**Sender:** `pat@docstoreinternal.com` (spoofed)  
+**Payload:** Fake "Get Started" link to a dummy page.  
 
-### There's a horizontal rule below this.
+The message was delivered and opened successfully.
 
-* * *
+![Phishing Email](screenshots/13.%20Phishing%20Email.png)
 
-### Here is an unordered list:
+---
 
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
+## Detection & Analysis
 
-### And an ordered list:
+### Threat Explorer
+Defender’s **Threat Explorer** dashboard was used to monitor message delivery and user interactions.  
+It displayed messages from:
+- `attacksimulationtraining.com`
+- `microsoft.com`
+- `nihatlab.onmicrosoft.com`
 
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
+Delivery actions and timestamps confirmed detection worked as expected.
 
-### And a nested list:
+![Threat Explorer](screenshots/6.%20Threat%20Explorer%20working.png)
+![Email Explorer](screenshots/14.%20Email%20Explorer.png)
 
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
+---
 
-### Small image
+### Advanced Hunting (KQL)
+Email telemetry was verified using **Advanced Hunting** in Defender XDR.
 
-![Octocat](https://github.githubassets.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![Branching](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
-```
+```kql
+EmailEvents
+| sort by Timestamp desc
+| project Timestamp, RecipientEmailAddress, SenderFromAddress, Subject, DeliveryAction, ThreatTypes
+| take 20
