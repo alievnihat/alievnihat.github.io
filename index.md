@@ -281,7 +281,7 @@ SigninLogs
     LastSeen  = max(TimeGenerated),
     AppList   = make_set(AppDisplayName, 5)
   by UserPrincipalName, IPAddress
-| where Failures >= 3   // tune 3–8 depending on your environment
+| where Failures >= 3 
 ```
 
 ## Step 2 — Analytics Rule (Brute-Force Detection)
@@ -305,7 +305,7 @@ SigninLogs
     LastSeen  = max(TimeGenerated),
     AppList   = make_set(AppDisplayName, 5)
   by UserPrincipalName, IPAddress
-| where Failures >= 3   // tune 3–8 depending on your environment
+| where Failures >= 3   //
 ```
 
 ---
