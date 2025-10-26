@@ -213,6 +213,10 @@ It provides a clear view of how Microsoft’s security stack works together for 
 
 ---
 
+---
+
+---
+
 
 # Microsoft Sentinel — Brute-Force Attack Detection & Automated Response
 
