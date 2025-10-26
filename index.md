@@ -210,3 +210,43 @@ This lab aligns with several key techniques in the [MITRE ATT&CK framework](http
 ## Summary
 This lab demonstrates an end-to-end Microsoft 365 threat investigation workflow - from email delivery and Safe Links inspection, through phishing simulations, to data correlation in Sentinel.  
 It provides a clear view of how Microsoft’s security stack works together for detection, hunting, and response.
+
+
+
+# 🛡️ Microsoft Sentinel SIEM & SOAR: Automated Brute-Force Detection & Response
+
+## Overview
+This project shows a complete **Microsoft Sentinel SIEM + SOAR** workflow that detects and responds to **brute-force sign-in attempts**. It covers data ingestion, a scheduled analytics rule, a Logic App playbook for enrichment, and a custom Sentinel workbook to track detection/automation performance.
+
+---
+
+## 🎯 Objective
+Build an automated pipeline that:
+
+- Detects **multiple failed sign-ins from the same IP**  
+- Creates **alerts/incidents** in Sentinel  
+- Runs a **Logic App playbook** to tag, assign, and comment on incidents  
+- Surfaces **metrics** in a custom dashboard
+
+---
+
+## 🧩 Components
+
+| Area | Services |
+|---|---|
+| SIEM | Microsoft Sentinel |
+| SOAR | Azure Logic Apps (Managed Identity) |
+| Data | Azure AD **SigninLogs** |
+| Authoring | KQL analytics rule + entity mapping |
+| Visualization | Sentinel Workbook |
+
+---
+
+## 🔍 Step 1 — Verify Log Ingestion
+
+Quick check that **SigninLogs** are present:
+
+```kusto
+SigninLogs
+| take 10
+
