@@ -218,7 +218,7 @@ It provides a clear view of how Microsoft’s security stack works together for 
 
 
 
-# Microsoft Sentinel — Brute-Force Attack Detection & Automated Response
+## Microsoft Sentinel Siem & Soar Automation Lab
 
 This project demonstrates the end-to-end process of **detecting and automatically responding** to brute-force sign-in attempts in **Microsoft Sentinel**, using a combination of **KQL analytics rules**, **Logic Apps (SOAR playbook)**, and **custom dashboards** for visualization.
 
