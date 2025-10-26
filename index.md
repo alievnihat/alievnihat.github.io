@@ -229,7 +229,7 @@ This project demonstrates the end-to-end process of **detecting and automaticall
 A lab environment was built to simulate sign-in activity and failed authentication attempts across multiple accounts.  
 The goal was to detect and automatically triage repeated failed logins from the same IP — a typical brute-force behavior pattern.
 
-![Screenshot - New Workbook](screenshots2/1.SignIn%20Logs.png)
+![Screenshot - New Workbook](screenshots2/1.%20SignIn%20Logs.png)
 
 ### Data Sources Connected
 - **Azure Active Directory Sign-in Logs**  
