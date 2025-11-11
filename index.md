@@ -1,8 +1,6 @@
 ## Index
 - [Microsoft 365 Threat Investigation & Response Lab](#microsoft-365-threat-investigation--response-lab)
 - [Microsoft Sentinel SIEM & SOAR Automation Lab](#microsoft-sentinel-siem--soar-automation-lab)
-- [Windows & Azure Vulnerability Management Lab](#windows--azure-vulnerability-management-lab)
-- [SOC Level 1 Analyst Learning (TryHackMe)](#soc-level-1-analyst-learning-tryhackme)
 
 ---
 
